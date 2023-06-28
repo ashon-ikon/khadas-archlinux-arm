@@ -9,7 +9,7 @@ replacement to Windows or MacOS with different Desktop Environments.
     BOARDS= VIM3
 " #DESCRIPTION_END
 
-LABEL="Manjaro"
+LABEL="ArchLinux"
 BOARDS="VIM3 #"
 
 
@@ -20,7 +20,7 @@ FAIL() {
 }
 
 # add git
-opkg update && opkg install git git-http
+opkg update && opkg install libmbedtls12 git git-http
 
 BOARD=$(tr -d '\0' < /sys/firmware/devicetree/base/model || echo Khadas)
 echo "ArchLinux installation for $BOARD ..."
@@ -33,6 +33,7 @@ echo "part1 : start=16M," | sfdisk $(mmc_disk)
 mkfs.ext4 -L ROOT $(mmc_disk)p1 < /dev/null
 mkdir -p system && mount $(mmc_disk)p1 system
 ROOT=$(pwd)/system
+echo "Target root is ${ROOT}"
 
 # can chouse any other rootfs source
 SRC=http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz
