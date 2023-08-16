@@ -94,15 +94,7 @@ SRC=http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz
 echo "Downloading and extracting $SRC to ${ROOT}/"
 curl -A downloader -jkL $SRC | pigz -dc | tar -xf- -C ${ROOT}
 
-# setup extlinux config
-mkdir -p "${ROOT}/boot/extlinux" && mkdir -p "${ROOT}/boot/dtbs"
-cat <<-END > ${ROOT}/boot/extlinux/extlinux.conf
-LABEL ArchLinux
-    KERNEL /Image.gz
-    INITRD /initramfs-linux.img
-    FDTDIR /dtbs
-    APPEND root=LABEL=ROOT rw quiet
-END
+
 
 # Write the fstab
 BOOT_UUID=$(blkid -s UUID -o value ${TARGET_DRIVE}p1)
@@ -110,6 +102,16 @@ ROOT_UUID=$(blkid -s UUID -o value ${TARGET_DRIVE}p2)
 
 echo "UUID=${ROOT_UUID}" / auto errors=remount-ro 1 1 >> ${ROOT}/etc/fstab
 echo "UUID=${BOOT_UUID}" /boot vfat defaults 0 0 >> ${ROOT}/etc/fstab
+
+# setup extlinux config
+mkdir -p "${ROOT}/boot/extlinux" && mkdir -p "${ROOT}/boot/dtbs"
+cat <<-END > ${ROOT}/boot/extlinux/extlinux.conf
+LABEL ArchLinux
+    KERNEL /Image.gz
+    INITRD /initramfs-linux.img
+    FDTDIR /dtbs
+    APPEND root=UUID=${BOOT_UUID} rw quiet
+END
 
 # setup host name
 echo ${BOARD_MODEL// /-} > ${ROOT}/etc/hostname
