@@ -110,7 +110,7 @@ LABEL ArchLinux
     KERNEL /Image.gz
     INITRD /initramfs-linux.img
     FDTDIR /dtbs
-    APPEND root=UUID=${BOOT_UUID} rw quiet
+    APPEND root=UUID=${ROOT_UUID} rw quiet
 END
 
 # setup host name
